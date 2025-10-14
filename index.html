@@ -6,45 +6,29 @@
 <title>UNIOSUN Campus News</title>
 <style>
 :root {
-  --color-primary: #007F3D; /* Green */
-  --color-accent: #FFD300;  /* Yellow */
-  --color-bg: #FFFFFF;      /* White */
-  --color-text: #222222;    /* Text color */
+  --color-primary: #007F3D; 
+  --color-accent: #FFD300;  
+  --color-bg: #FFFFFF;      
+  --color-text: #222222;    
 }
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
 body { overflow-x:hidden; }
 
 /* Splash Screen */
-#splashScreen {
-  position:fixed; top:0; left:0;
-  width:100%; height:100%;
-  background: linear-gradient(135deg, #007F3D, #FFD300, #FFFFFF);
-  display:flex; flex-direction:column;
-  justify-content:center; align-items:center;
-  z-index:10000; text-align:center;
-}
+#splashScreen { position:fixed; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, #007F3D, #FFD300, #FFFFFF); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:10000; text-align:center; }
 #splashScreen h1 { color:#fff; font-size:3rem; margin-bottom:1rem; }
 #splashScreen p { color:#fff; font-size:1.2rem; margin-bottom:2rem; }
-#continueBtn {
-  background: var(--color-primary); color: var(--color-bg);
-  padding:0.8rem 1.5rem; font-size:1.2rem; border:none; border-radius:8px;
-  cursor:pointer; font-weight:bold; transition:0.3s ease;
-}
+#continueBtn { background: var(--color-primary); color: var(--color-bg); padding:0.8rem 1.5rem; font-size:1.2rem; border:none; border-radius:8px; cursor:pointer; font-weight:bold; transition:0.3s ease; }
 #continueBtn:hover { background: var(--color-accent); color: var(--color-primary); }
 
 /* Header & Nav */
 header { background-color: var(--color-primary); color: var(--color-bg); text-align:center; padding:1.5rem 1rem; font-weight:bold; font-size:1.4rem; letter-spacing:1px; display:none;}
 nav { background-color: var(--color-accent); display:none; justify-content:center; flex-wrap:wrap; padding:0.7rem 0; }
-nav a { color: var(--color-primary); text-decoration:none; margin:0.5rem 1rem; font-weight:600; transition:0.3s ease; }
+nav a { color: var(--color-primary); text-decoration:none; margin:0.5rem 1rem; font-weight:600; transition:0.3s ease; cursor:pointer; }
 nav a:hover { color: var(--color-text); }
 
 /* Hero Section */
-.hero {
-  background: linear-gradient(rgba(0,127,61,0.85), rgba(0,127,61,0.85)),
-              url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1500&q=60');
-  background-size: cover; background-position: center; color:white;
-  text-align:center; padding:5rem 2rem; display:none;
-}
+.hero { background: linear-gradient(rgba(0,127,61,0.85), rgba(0,127,61,0.85)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1500&q=60'); background-size: cover; background-position: center; color:white; text-align:center; padding:5rem 2rem; display:none; }
 .hero h1 { font-size:2rem; margin-bottom:1rem; }
 .hero p { font-size:1rem; margin-bottom:1.5rem; }
 .btn { background-color: var(--color-accent); color: var(--color-primary); border:none; padding:0.8rem 1.5rem; border-radius:8px; font-weight:bold; cursor:pointer; transition:0.3s ease; display:inline-block; text-decoration:none; margin:0.3rem; }
@@ -75,10 +59,7 @@ nav a:hover { color: var(--color-text); }
 #result { text-align:center; margin-top:1rem; font-size:1.2rem; color:#007F3D; }
 
 /* Social & Institution Icons */
-.hero .icon-link {
-  display:inline-flex; align-items:center; margin:0.3rem;
-  padding:0.6rem 1rem; border-radius:8px; font-weight:bold; text-decoration:none; transition:0.3s ease;
-}
+.hero .icon-link { display:inline-flex; align-items:center; margin:0.3rem; padding:0.6rem 1rem; border-radius:8px; font-weight:bold; text-decoration:none; transition:0.3s ease; }
 .hero .icon-link img { width:24px; height:24px; margin-right:0.5rem; }
 .hero .icon-link.whatsapp { background-color:#25D366; color:white; }
 .hero .icon-link.whatsapp:hover { background-color:#128C7E; }
@@ -101,11 +82,12 @@ footer { background-color: var(--color-primary); color: var(--color-bg); text-al
 
 <nav id="mainNav">
 <a href="#">Home</a>
-<a href="#">Campus News</a>
-<a href="#">Admission</a>
+<a href="#" id="campusNewsNav">Campus News</a>
+<a href="#" id="admissionNav">Admission</a>
 <a href="#">Gist</a>
-<a href="#">Opportunities</a>
+<a href="#" id="gamingBtn">🎮 Gaming</a>
 <a href="#" id="openFaculty">🎓 Faculty Groups</a>
+<a href="https://efacility.jamb.gov.ng/" target="_blank" id="jambBtn">📝 JAMB Portal</a>
 </nav>
 
 <section class="hero" id="mainPage">
@@ -115,37 +97,47 @@ footer { background-color: var(--color-primary); color: var(--color-bg); text-al
 <a href="#" class="btn" id="facultyBtn">🎓 Faculty/Department Links</a>
 
 <!-- WhatsApp -->
-<a href="https://wa.me/YOURNUMBER" target="_blank" class="icon-link whatsapp">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"> WhatsApp Channel
+<a href="https://whatsapp.com/channel/0029VbAleTZ3LdQXTANM1z1u" target="_blank" class="icon-link whatsapp">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"> WhatsApp Channel
 </a>
 
 <!-- Other Institutions -->
 <a href="https://www.unilorin.edu.ng" target="_blank" class="icon-link institution">
-  <img src="https://upload.wikimedia.org/wikipedia/en/1/1f/University_of_Lorin_logo.png" alt="Unilorin"> Unilorin
+<img src="https://upload.wikimedia.org/wikipedia/en/1/1f/University_of_Lorin_logo.png" alt="Unilorin"> Unilorin
 </a>
 <a href="https://www.ui.edu.ng" target="_blank" class="icon-link institution">
-  <img src="https://upload.wikimedia.org/wikipedia/en/1/1b/University_of_Ibadan_logo.png" alt="UI"> UI
+<img src="https://upload.wikimedia.org/wikipedia/en/1/1b/University_of_Ibadan_logo.png" alt="UI"> UI
 </a>
 <a href="https://www.oauife.edu.ng" target="_blank" class="icon-link institution">
-  <img src="https://upload.wikimedia.org/wikipedia/en/8/81/OAU_logo.png" alt="OAU"> OAU
+<img src="https://upload.wikimedia.org/wikipedia/en/8/81/OAU_logo.png" alt="OAU"> OAU
 </a>
 </section>
 
 <section class="section" id="newsSection">
 <h2>📰 Latest Campus Updates</h2>
 <div class="news-grid">
-<div class="news-card">
-<h3>Important Notice for All Freshers</h3>
-<p>Lectures and physical registration start in November. Print at least 6 copies of your documents, arrange them properly, and proceed to hostel allocation if already paid. For physical registration, meet your faculty officer with documents. Stay alert for scammers.</p>
-</div>
-<div class="news-card">
-<h3>ASUU Strike Update</h3>
-<p>ASUU has started a warning strike as of October 13, 2025. Academic activities may be delayed. Keep checking your student portal and news updates.</p>
-</div>
+  <div class="news-card">
+    <h3>Freshers Notice</h3>
+    <p>Lectures and physical registration start in November. Print at least 6 copies of your documents, arrange them properly, and proceed to hostel allocation if already paid. For physical registration, meet your faculty officer with documents. Stay alert for scammers.</p>
+  </div>
+
+  <div class="news-card">
+    <h3>ASUU Strike Update</h3>
+    <p>ASUU has started a warning strike as of October 13, 2025. Academic activities may be delayed. Keep checking your student portal and news updates.</p>
+  </div>
+
+  <div class="news-card">
+    <h3>Admission Updates</h3>
+    <p>
+      1️⃣ 1st Batch Merit List was released on 24th September (Saturday).<br>
+      2️⃣ 2nd Batch (Supplementary List) was released on 11th October.<br>
+      3️⃣ 3rd Batch ... loading<br>
+      4️⃣ Last Batch ... loading
+    </p>
+  </div>
 </div>
 </section>
 
-<!-- Screening Calculator -->
 <section id="screeningPage">
 <h1>🧮 Screening Calculator</h1>
 <label>Course (to be updated later)</label>
@@ -175,7 +167,7 @@ footer { background-color: var(--color-primary); color: var(--color-bg); text-al
 <footer>© 2025 UNIOSUN Campus News | Designed by Students 💚💛🤍</footer>
 
 <script>
-// Splash Screen Continue Button
+// Splash Screen
 document.getElementById('continueBtn').onclick = function(){
     document.getElementById('splashScreen').style.display = 'none';
     document.getElementById('mainHeader').style.display = 'block';
@@ -199,6 +191,7 @@ const screeningPage = document.getElementById('screeningPage');
 const backBtn = document.getElementById('backBtn');
 const calculateBtn = document.getElementById('calculateBtn');
 const result = document.getElementById('result');
+
 openCalculator.onclick = function(){
     screeningPage.style.display = 'block';
     document.getElementById('mainPage').style.display = 'none';
@@ -209,17 +202,33 @@ backBtn.onclick = function(){
     document.getElementById('mainPage').style.display = 'block';
     document.getElementById('newsSection').style.display = 'block';
 };
+
+// Screening Calculation
 calculateBtn.onclick = function(){
     const jamb = parseFloat(document.getElementById('jambScore').value);
     const ogrades = document.getElementById('olevel').value.trim().split(" ");
     let olevelScore = 0;
     const gradeMap = { 'A1':8,'B2':7,'B3':6,'C4':5,'C5':4,'C6':3,'D7':2,'E8':1,'F9':0 };
-ogrades.forEach(g => { if(gradeMap[g.toUpperCase()]) olevelScore += gradeMap[g.toUpperCase()]; });
-const jambScore = (jamb/400)*60;
-const totalScore = jambScore + olevelScore;
-result.innerHTML = `Your Screening Score is: ${totalScore.toFixed(2)}`;
+    ogrades.forEach(g => { if(gradeMap[g.toUpperCase()]) olevelScore += gradeMap[g.toUpperCase()]; });
+    const jambScore = (jamb/400)*60;
+    const totalScore = jambScore + olevelScore;
+    result.innerHTML = `Your Screening Score is: ${totalScore.toFixed(2)}`;
+};
+
+// Admission Nav
+document.getElementById('admissionNav').onclick = function(){
+    window.open('https://admissions.uniosun.edu.ng/returning/', '_blank');
+};
+
+// Campus News Nav
+document.getElementById('campusNewsNav').onclick = function(){
+    window.open('https://www.uniosun.edu.ng', '_blank');
+};
+
+// Gaming Button
+document.getElementById('gamingBtn').onclick = function(){
+    alert("Gaming section coming soon! 🎮");
 };
 </script>
-
 </body>
 </html>
