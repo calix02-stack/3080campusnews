@@ -1,312 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNIOSUN Campus News</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIOSUN Campus Info & Screening</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--green:#007F3D;--yellow:#FFD300;--white:#ffffff;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{background: linear-gradient(135deg,var(--green),var(--yellow));color:var(--white);overflow-x:hidden;}
 
-  <!-- ✅ GOOGLE ADSENSE SCRIPT -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3248699846047228"
-    crossorigin="anonymous"></script>
+/* SPLASH SCREEN */
+@keyframes flashBG{0%{background-color:#007F3D;}50%{background-color:#FFD300;}100%{background-color:#007F3D;}}
+@keyframes fadeIn{from{opacity:0;transform:scale(0.9);}to{opacity:1;transform:scale(1);}}
+#splashScreen{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;animation:flashBG 2s infinite;z-index:9999;}
+#splashScreen .logo{width:130px;height:130px;background:white;border-radius:50%;padding:10px;margin-bottom:15px;animation:fadeIn 1.5s ease-in-out;box-shadow:0 0 20px rgba(0,0,0,0.4);}
+#splashScreen h1{color:white;font-size:2rem;font-family:'Brush Script MT',cursive;margin-bottom:20px;}
+.progress-container{width:85%;height:10px;background: rgba(255,255,255,0.3);border-radius:5px;overflow:hidden;position:absolute;bottom:50px;}
+.progress-bar{width:0%;height:100%;background:linear-gradient(90deg,#00FF00,#007F3D);transition:width 5s linear;}
+#tapNote{position:absolute;bottom:20px;font-style:italic;animation:fadeIn 1.5s ease-in-out infinite alternate;}
 
-  <style>
-    :root {
-      --color-primary: #007F3D;
-      --color-accent: #FFD300;
-      --color-bg: #FFFFFF;
-      --color-text: #222222;
-    }
-    * {margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif;}
-    body {overflow-x:hidden;}
-    /* Splash Screen */
-    #splashScreen {
-      position:fixed; top:0; left:0; width:100%; height:100%;
-      background: linear-gradient(135deg, #007F3D, #FFD300, #FFFFFF);
-      display:flex; flex-direction:column; justify-content:center; align-items:center;
-      z-index:10000; text-align:center;
-    }
-    #splashScreen h1 { color:#fff; font-size:3rem; margin-bottom:1rem; }
-    #splashScreen p { color:#fff; font-size:1.2rem; margin-bottom:2rem; }
-    #continueBtn {
-      background: var(--color-primary); color: var(--color-bg);
-      padding:0.8rem 1.5rem; font-size:1.2rem; border:none;
-      border-radius:8px; cursor:pointer; font-weight:bold;
-      transition:0.3s ease;
-    }
-    #continueBtn:hover { background: var(--color-accent); color: var(--color-primary); }
-    header {
-      background-color: var(--color-primary); color: var(--color-bg);
-      text-align:center; padding:1.5rem 1rem; font-weight:bold;
-      font-size:1.4rem; letter-spacing:1px; display:none;
-    }
-    nav {
-      background-color: var(--color-accent); display:none;
-      justify-content:center; flex-wrap:wrap; padding:0.7rem 0;
-    }
-    nav a {
-      color: var(--color-primary); text-decoration:none;
-      margin:0.5rem 1rem; font-weight:600; transition:0.3s ease; cursor:pointer;
-    }
-    nav a:hover { color: var(--color-text); }
-    .hero {
-      background: linear-gradient(rgba(0,127,61,0.85), rgba(0,127,61,0.85)),
-      url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1500&q=60');
-      background-size: cover; background-position: center;
-      color:white; text-align:center; padding:5rem 2rem; display:none;
-    }
-    .hero h1 { font-size:2rem; margin-bottom:1rem; }
-    .hero p { font-size:1rem; margin-bottom:1.5rem; }
-    .btn {
-      background-color: var(--color-accent); color: var(--color-primary);
-      border:none; padding:0.8rem 1.5rem; border-radius:8px;
-      font-weight:bold; cursor:pointer; transition:0.3s ease;
-      display:inline-block; text-decoration:none; margin:0.3rem;
-    }
-    .btn:hover { background-color: var(--color-primary); color: var(--color-accent); }
-    .section {
-      padding:2.5rem 1rem; text-align:center; display:none;
-    }
-    .section h2 { color: var(--color-primary); margin-bottom:1rem; }
-    .news-grid {
-      display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr));
-      gap:1.5rem; max-width:1000px; margin:0 auto;
-    }
-    .news-card {
-      border:2px solid var(--color-primary); border-radius:10px;
-      padding:1rem; background-color:#f9f9f9; transition:0.3s ease;
-    }
-    .news-card:hover {
-      transform:translateY(-5px); box-shadow:0 4px 8px rgba(0,0,0,0.1);
-    }
-    .news-card h3 { color: var(--color-primary); margin-bottom:0.5rem; }
-    .news-card p { font-size:0.9rem; }
-    .overlay {
-      position:fixed; top:0; left:0; right:0; bottom:0;
-      background:rgba(0,0,0,0.7); display:none;
-      align-items:center; justify-content:center; z-index:1000;
-    }
-    .popup {
-      background:white; width:90%; max-width:600px;
-      padding:1.5rem; border-radius:12px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.2);
-      overflow-y:auto; max-height:80vh;
-    }
-    .popup h2 {
-      color:var(--color-primary);
-      border-bottom:2px solid var(--color-accent);
-      padding-bottom:0.3rem;
-    }
-    .popup .group {
-      background:#f9f9f9; padding:0.8rem; border-radius:8px;
-      border:1px solid var(--color-primary); margin-top:1rem;
-    }
-    .popup .group a {
-      background:var(--color-accent); color:var(--color-primary);
-      padding:0.4rem 0.8rem; border-radius:6px;
-      font-weight:bold; text-decoration:none; display:inline-block; margin-top:0.4rem;
-    }
-    .popup .close {
-      float:right; cursor:pointer; color:#555; font-size:1.2rem; margin-top:-0.5rem;
-    }
-    #screeningPage {
-      display:none; padding:2rem; max-width:500px; margin:0 auto;
-    }
-    #screeningPage input, #screeningPage select, #screeningPage button {
-      width:100%; padding:0.5rem; margin-bottom:1rem;
-      border-radius:6px; border:1px solid #ccc;
-    }
-    #screeningPage button {
-      background:#FFD300; color:#007F3D; font-weight:bold;
-      cursor:pointer; border:none;
-    }
-    #screeningPage button:hover { background:#007F3D; color:#FFD300; }
-    #result { text-align:center; margin-top:1rem; font-size:1.2rem; color:#007F3D; }
-    .hero .icon-link {
-      display:inline-flex; align-items:center;
-      margin:0.3rem; padding:0.6rem 1rem;
-      border-radius:8px; font-weight:bold;
-      text-decoration:none; transition:0.3s ease;
-    }
-    .hero .icon-link img { width:24px; height:24px; margin-right:0.5rem; }
-    .hero .icon-link.whatsapp { background-color:#25D366; color:white; }
-    .hero .icon-link.whatsapp:hover { background-color:#128C7E; }
-    .hero .icon-link.institution { background-color:#FFD300; color:#007F3D; }
-    .hero .icon-link.institution:hover { background-color:#FFC107; color:#007F3D; }
-    footer {
-      background-color: var(--color-primary); color: var(--color-bg);
-      text-align:center; padding:1rem; font-size:0.9rem; margin-top:2rem;
-    }
-    .ad-box { margin: 2rem auto; text-align: center; max-width: 100%; }
-  </style>
+/* HEADER */
+header{background: rgba(0,0,0,0.2); text-align:center; padding:1rem; font-size:1.5rem; font-weight:600; backdrop-filter: blur(5px); display:none;}
+
+/* HOMEPAGE */
+.home-container{display:none;padding:2rem 1rem;text-align:center;animation:fadeIn 1.5s ease-in-out;}
+.home-logo{width:100px;height:100px;border-radius:50%;background:white;padding:10px;box-shadow:0 0 10px rgba(0,0,0,0.4);margin-bottom:10px;}
+.home-title{font-size:1.8rem;font-weight:700;margin-bottom:0.5rem;}
+.icon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-top:1.5rem;}
+.icon-card{background:rgba(255,255,255,0.15);border-radius:15px;padding:1rem;transition:0.3s ease;cursor:pointer;text-decoration:none;color:white;display:flex;flex-direction:column;align-items:center;}
+.icon-card:hover{background:rgba(255,255,255,0.3);transform:scale(1.05);}
+.icon-card img{width:40px;height:40px;margin-bottom:0.5rem;}
+.icon-card span{display:block;font-weight:600;color:white;}
+
+/* SCREENING CALCULATOR */
+#screeningPage{display:none;text-align:center;padding:2rem 1rem;}
+.calculator-container{background: rgba(255,255,255,0.95);color:#222;border-radius:20px;padding:30px 20px;max-width:400px;margin:0 auto;box-shadow:0 0 15px rgba(0,0,0,0.3);}
+.calculator-container h1{margin-bottom:20px;color: var(--green);}
+.calculator-container label{display:block;margin:10px 0 5px;font-weight:600;text-align:left;}
+.calculator-container input,.calculator-container select{width:80%;padding:8px;border-radius:6px;border:1px solid #ccc;text-align:center;margin-bottom:10px;}
+.calculator-container button{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-weight:600;margin-top:10px;}
+.calc-btn{background: var(--green);color:white;}
+.calc-btn:hover{background:#005f2a;}
+.back-btn{background: var(--yellow);color: var(--green);}
+.back-btn:hover{background:#e6c200;}
+#calcResult{margin-top:15px;font-weight:600;font-size:1.1rem;}
+
+/* MODAL NEWS */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;}
+.modal-content{background:white;color:#333;border-radius:15px;max-width:700px;height:80vh;overflow-y:auto;margin:8% auto;padding:20px;position:relative;}
+.modal-content::-webkit-scrollbar{width:8px;}
+.modal-content::-webkit-scrollbar-thumb{background:var(--green);border-radius:10px;}
+.modal-content h2{color:var(--green);margin-bottom:15px;text-align:center;}
+.close{position:absolute;top:10px;right:15px;font-size:22px;cursor:pointer;}
+.news-item{margin-bottom:20px;}
+.news-item h3{color:var(--green);}
+.news-item p{line-height:1.5;font-size:15px;}
+
+footer{background:rgba(0,0,0,0.2);text-align:center;padding:1rem;font-size:0.9rem;color:white;margin-top:2rem;}
+</style>
 </head>
 <body>
 
-  <!-- Splash Screen -->
-  <div id="splashScreen">
-    <h1>🌞 UNIOSUN CAMPUS NEWS</h1>
-    <p>Welcome! 💚💛🤍</p>
-    <button id="continueBtn">Continue to Site</button>
-  </div>
+<!-- SPLASH SCREEN -->
+<div id="splashScreen">
+  <img src="https://www.uniosun.edu.ng/images/logo.png" alt="UniOsun Logo" class="logo">
+  <h1 id="welcomeText"></h1>
+  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+  <p id="tapNote" style="display:none;">👆 Tap anywhere to continue</p>
+</div>
 
-  <header id="mainHeader">🌞 UNIOSUN CAMPUS NEWS</header>
+<!-- HEADER -->
+<header id="mainHeader">🌞 UNIOSUN CAMPUS NEWS 💚💛🤍</header>
 
-  <nav id="mainNav">
-    <a href="#">Home</a>
-    <a href="#" id="campusNewsNav">Campus News</a>
-    <a href="#" id="admissionNav">Admission</a>
-    <a href="#" id="gamingBtn">🎮 Gaming</a>
-    <a href="#" id="openFaculty">🎓 Faculty Groups</a>
-    <a href="https://efacility.jamb.gov.ng/" target="_blank" id="jambBtn">📝 JAMB Portal</a>
-  </nav>
+<!-- HOMEPAGE -->
+<section class="home-container" id="homePage">
+  <img src="https://www.uniosun.edu.ng/images/logo.png" alt="UniOsun Logo" class="home-logo">
+  <h2 class="home-title">Welcome to Uniosun Info & Cruise 3080</h2>
 
-  <section class="hero" id="mainPage">
-    <h1>Welcome to Uniosun Info & Cruise 💚💛🤍</h1>
-    <p>Your trusted source for campus updates, gist, and opportunities.</p>
-    <a href="#" class="btn" id="openCalculator">🧮 Screening Calculator</a>
-    <a href="#" class="btn" id="facultyBtn">🎓 Faculty/Department Links</a>
-
-    <!-- ✅ WhatsApp -->
-    <a href="https://whatsapp.com/channel/0029VbAleTZ3LdQXTANM1z1u" target="_blank" class="icon-link whatsapp">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"> WhatsApp Channel
-    </a>
-
-    <!-- Institutions -->
-    <a href="https://www.unilorin.edu.ng" target="_blank" class="icon-link institution">
-      <img src="https://upload.wikimedia.org/wikipedia/en/1/1f/University_of_Lorin_logo.png" alt="Unilorin"> Unilorin
-    </a>
-    <a href="https://www.ui.edu.ng" target="_blank" class="icon-link institution">
-      <img src="https://upload.wikimedia.org/wikipedia/en/1/1b/University_of_Ibadan_logo.png" alt="UI"> UI
-    </a>
-    <a href="https://www.oauife.edu.ng" target="_blank" class="icon-link institution">
-      <img src="https://upload.wikimedia.org/wikipedia/en/8/81/OAU_logo.png" alt="OAU"> OAU
-    </a>
-  </section>
-
-  <!-- ✅ AdSense display area -->
-  <div class="ad-box">
-    <ins class="adsbygoogle"
-      style="display:block"
-      data-ad-client="ca-pub-3248699846047228"
-      data-ad-slot="1234567890"
-      data-ad-format="auto"
-      data-full-width-responsive="true"></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-  </div>
-
-  <!-- News Section -->
-  <section class="section" id="newsSection">
-    <h2>📰 Latest Campus Updates</h2>
-    <div class="news-grid">
-      <div class="news-card">
-        <h3>Freshers Notice</h3>
-        <p>Lectures and physical registration start in November. Print at least 6 copies of your documents, arrange them properly, and proceed to hostel allocation if already paid. For physical registration, meet your faculty officer with documents. Stay alert for scammers.</p>
-      </div>
-
-      <div class="news-card">
-        <h3>ASUU Strike Update</h3>
-        <p>ASUU has started a warning strike as of October 13, 2025. Academic activities may be delayed. Keep checking your student portal and news updates.</p>
-      </div>
-
-      <div class="news-card">
-        <h3>Admission Updates</h3>
-        <p>
-          1️⃣ 1st Batch Merit List was released on 24th September (Saturday).<br>
-          2️⃣ 2nd Batch (Supplementary List) was released on 11th October.<br>
-          3️⃣ 3rd Batch ... loading<br>
-          4️⃣ Last Batch ... loading
-        </p>
-      </div>
-
-      <div class="news-card">
-        <h3>Payment Portal Activated ⚡</h3>
-        <p>
-          The UNIOSUN portal is now active for payment of <b>Access Fee</b>, <b>Medical Fee</b>, and <b>Acceptance Fee</b> for candidates admitted under the <b>2nd Batch (Supplementary List)</b>.<br><br>
-          Candidates are advised to check their <b>JAMB Portal</b> frequently for updates on admission in progress.<br><br>
-          🕓 <i>Published: 9:20 PM, Wednesday, 15th October 2025</i>
-        </p>
-      </div>
+  <div class="icon-grid">
+    <div class="icon-card" onclick="openNewsModal()">
+      <img src="https://cdn-icons-png.flaticon.com/512/3416/3416043.png"><span>Campus Updates</span>
     </div>
-  </section>
+    <a href="https://efacility.jamb.gov.ng" target="_blank" class="icon-card">
+      <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png"><span>JAMB eFacility</span>
+    </a>
+    <a href="https://portal.uniosun.edu.ng" target="_blank" class="icon-card">
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135794.png"><span>Student Portal</span>
+    </a>
+    <div class="icon-card" onclick="showScreening()">
+      <img src="https://cdn-icons-png.flaticon.com/512/2920/2920268.png"><span>Screening Calculator</span>
+    </div>
+    <a href="https://www.perplexity.ai/" target="_blank" class="icon-card">
+      <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png"><span>AI Chat</span>
+    </a>
+    <a href="https://whatsapp.com/channel/0029VbAleTZ3LdQXTANM1z1u" target="_blank" class="icon-card">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"><span>WhatsApp Channel</span>
+    </a>
+  </div>
+</section>
 
-  <section id="screeningPage">
-    <h1>🧮 Screening Calculator</h1>
-    <label>O-Level Grades (type e.g. A1 B2 B3 C4 C5)</label>
-    <input type="text" id="olevel" placeholder="Enter your O-Level grades here">
-    <label>JAMB Score</label>
-    <input type="number" id="jambScore" placeholder="Enter your JAMB score">
-    <button id="calculateBtn">Calculate Score</button>
-    <div id="result"></div>
-    <button id="backBtn" style="background:#007F3D;color:#FFD300;">⬅ Back to Main Page</button>
-  </section>
+<!-- SCREENING CALCULATOR -->
+<section id="screeningPage">
+  <div class="calculator-container">
+    <h1>Screening Calculator</h1>
+    <label>JAMB Score (0-400)</label>
+    <input type="number" id="jambScore" placeholder="Enter JAMB Score" min="0" max="400">
+    <label>O'Level Grades (5 Subjects)</label>
+    <select id="grade1"><option value="">Subject 1</option><option>A1</option><option>B2</option><option>B3</option><option>C4</option><option>C5</option><option>C6</option></select>
+    <select id="grade2"><option value="">Subject 2</option><option>A1</option><option>B2</option><option>B3</option><option>C4</option><option>C5</option><option>C6</option></select>
+    <select id="grade3"><option value="">Subject 3</option><option>A1</option><option>B2</option><option>B3</option><option>C4</option><option>C5</option><option>C6</option></select>
+    <select id="grade4"><option value="">Subject 4</option><option>A1</option><option>B2</option><option>B3</option><option>C4</option><option>C5</option><option>C6</option></select>
+    <select id="grade5"><option value="">Subject 5</option><option>A1</option><option>B2</option><option>B3</option><option>C4</option><option>C5</option><option>C6</option></select>
+    <button class="calc-btn" onclick="calculateScore()">Calculate</button>
+    <div id="calcResult"></div>
+    <button class="back-btn" onclick="showHome()">🏠 Back to Home</button>
+  </div>
+</section>
 
-  <div class="overlay" id="facultyPopup">
-    <div class="popup">
-      <span class="close" id="closePopup">✖</span>
-      <h2>🎓 Faculty & Department Group Links</h2>
-      <div class="group"><strong>Faculty of Management Sciences</strong><br><a href="#">Business Admin</a> <a href="#">Accounting</a></div>
-      <div class="group"><strong>Faculty of Science</strong><br><a href="#">Computer Science</a> <a href="#">Microbiology</a></div>
-      <div class="group"><strong>Faculty of Education</strong><br><a href="#">Guidance & Counselling</a></div>
+<!-- CAMPUS NEWS MODAL -->
+<div id="newsModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeNewsModal()">&times;</span>
+    <h2>📰 UNIOSUN Campus Updates</h2>
+    <div class="news-item">
+      <h3>1️⃣ Two Weeks Strike</h3>
+      <p>The school management has declared a two-week warning strike due to staff demands. Academic activities are temporarily on hold. Students are advised to remain calm and await further updates from the union representatives.</p>
+    </div>
+    <div class="news-item">
+      <h3>2️⃣ Merit List Released</h3>
+      <p>The first batch of admission has been released. The second supplementary list is expected before the end of October. Candidates should check their JAMB CAPS regularly for updates.</p>
+    </div>
+    <div class="news-item">
+      <h3>3️⃣ NELFund Not Affected</h3>
+      <p>The ongoing strike does not affect NELFund operations. Students can continue to access and apply for NELFund benefits as usual.</p>
+    </div>
+    <div class="news-item">
+      <h3>4️⃣ Document Printing Instructions</h3>
+      <p>All newly admitted students must print six copies of their registration documents. Two should be printed immediately after registration — one for the school and one for personal record. Four additional photocopies of the signed document should be made for future use. No official resumption date yet.</p>
+    </div>
+    <div class="news-item">
+      <h3>5️⃣ Deadline: October 18 (Supplementary List I)</h3>
+      <p>Deadline for payment of Access, Acceptance, and Medical fees for Supplementary List I is October 18. Required documents include Tax Clearance (available the next day after payment), Attestation Letter, JAMB Admission Letter, and Original JAMB Result.</p>
+    </div>
+    <div class="news-item">
+      <h3>6️⃣ Second Batch Released</h3>
+      <p>The second batch of admission has been released. Candidates are advised to monitor their JAMB portals as admission is rolling out. To accept admission, text your JAMB registration number followed by ACCEPT using the phone number registered with JAMB.</p>
     </div>
   </div>
+</div>
 
-  <footer>© 2025 UNIOSUN Campus News | Designed by Students 💚💛🤍</footer>
+<footer>© 2025 UNIOSUN Campus Info & Screening | Built for Students 💚💛🤍</footer>
 
-  <script>
-    document.getElementById('continueBtn').onclick = function(){
-      document.getElementById('splashScreen').style.display = 'none';
-      document.getElementById('mainHeader').style.display = 'block';
-      document.getElementById('mainNav').style.display = 'flex';
-      document.getElementById('mainPage').style.display = 'block';
-      document.getElementById('newsSection').style.display = 'block';
-    };
+<script>
+// SPLASH SCREEN
+const text="💚💛🤍 Welcome to Uniosun Info & Cruise 3080 💚💛🤍";
+const welcomeText=document.getElementById("welcomeText");
+const progressBar=document.getElementById("progressBar");
+const tapNote=document.getElementById("tapNote");
+let i=0;
+function typeEffect(){if(i<text.length){welcomeText.innerHTML+=text.charAt(i);i++;setTimeout(typeEffect,80);}}
+typeEffect();
+setTimeout(()=>{progressBar.style.width="100%";},500);
+setTimeout(()=>{tapNote.style.display="block";},5000);
 
-    const facultyBtn = document.getElementById('facultyBtn');
-    const openFaculty = document.getElementById('openFaculty');
-    const popup = document.getElementById('facultyPopup');
-    const closePopup = document.getElementById('closePopup');
-    facultyBtn.onclick = openFaculty.onclick = function(){ popup.style.display = 'flex'; }
-    closePopup.onclick = function(){ popup.style.display = 'none'; }
-    window.onclick = function(e){ if(e.target === popup) popup.style.display = 'none'; }
+document.getElementById('splashScreen').addEventListener('click',()=>{
+  document.getElementById('splashScreen').style.opacity='0';
+  setTimeout(()=>{
+    document.getElementById('splashScreen').style.display='none';
+    document.getElementById('mainHeader').style.display='block';
+    document.getElementById('homePage').style.display='block';
+  },500);
+});
 
-    const openCalculator = document.getElementById('openCalculator');
-    const screeningPage = document.getElementById('screeningPage');
-    const backBtn = document.getElementById('backBtn');
-    const calculateBtn = document.getElementById('calculateBtn');
-    const result = document.getElementById('result');
+// NAVIGATION
+function showScreening(){
+  document.getElementById('homePage').style.display='none';
+  document.getElementById('screeningPage').style.display='block';
+}
+function showHome(){
+  document.getElementById('screeningPage').style.display='none';
+  document.getElementById('homePage').style.display='block';
+}
 
-    openCalculator.onclick = function(){
-      screeningPage.style.display = 'block';
-      document.getElementById('mainPage').style.display = 'none';
-      document.getElementById('newsSection').style.display = 'none';
-    };
-    backBtn.onclick = function(){
-      screeningPage.style.display = 'none';
-      document.getElementById('mainPage').style.display = 'block';
-      document.getElementById('newsSection').style.display = 'block';
-    };
+// CALCULATOR
+const gradePoints={"A1":8,"B2":7,"B3":6,"C4":5,"C5":4,"C6":3};
+function calculateScore(){
+  const jamb=parseFloat(document.getElementById('jambScore').value);
+  const grades=[
+    gradePoints[document.getElementById('grade1').value],
+    gradePoints[document.getElementById('grade2').value],
+    gradePoints[document.getElementById('grade3').value],
+    gradePoints[document.getElementById('grade4').value],
+    gradePoints[document.getElementById('grade5').value]
+  ];
+  if(isNaN(jamb)||jamb<0||jamb>400){alert("Enter a valid JAMB score (0–400)");return;}
+  if(grades.includes(undefined)){alert("Select valid grades for all subjects");return;}
+  const jambScore=(jamb*60)/400;
+  const totalScore=jambScore+grades.reduce((a,b)=>a+b,0);
+  let comment=totalScore>=75?"🎉 Excellent!":"👍 Good! Keep pushing.";
+  if(totalScore<60)comment="⚠️ You may need improvement.";
+  document.getElementById('calcResult').innerHTML=`Your Total Score: <b>${totalScore.toFixed(2)}</b><br>${comment}`;
+}
 
-    calculateBtn.onclick = function(){
-      const jamb = parseFloat(document.getElementById('jambScore').value);
-      const ogrades = document.getElementById('olevel').value.trim().split(" ");
-      let olevelScore = 0;
-      const gradeMap = { 'A1':8,'B2':7,'B3':6,'C4':5,'C5':4,'C6':3,'D7':2,'E8':1,'F9':0 };
-      ogrades.forEach(g => { if(gradeMap[g.toUpperCase()]) olevelScore += gradeMap[g.toUpperCase()]; });
-      const jambScore = (jamb/400)*60;
-      const totalScore = jambScore + olevelScore;
-      result.innerHTML = `Your Screening Score is: ${totalScore.toFixed(2)}`;
-    };
+// MODAL
+function openNewsModal(){document.getElementById('newsModal').style.display='block';}
+function closeNewsModal(){document.getElementById('newsModal').style.display='none';}
+</script>
 
-    document.getElementById('admissionNav').onclick = function(){
-      window.open('https://admissions.uniosun.edu.ng/returning/', '_blank');
-    };
-    document.getElementById('campusNewsNav').onclick = function(){
-      window.open('https://www.uniosun.edu.ng', '_blank');
-    };
-    document.getElementById('gamingBtn').onclick = function(){
-      alert("Gaming section coming soon! 🎮");
-    };
-  </script>
 </body>
 </html>
