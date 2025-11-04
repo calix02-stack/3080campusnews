@@ -1,212 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UNIOSUN Campus Info & Screening</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<style>
-:root{--green:#007F3D;--yellow:#FFD300;--white:#ffffff;}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
-body{background: linear-gradient(135deg,var(--green),var(--yellow));color:var(--white);overflow-x:hidden;}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examly — JAMB CBT</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #0d1117;
+      color: #f1f5f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-/* SPLASH SCREEN */
-@keyframes flashBG{0%{background-color:#007F3D;}50%{background-color:#FFD300;}100%{background-color:#007F3D;}}
-@keyframes fadeIn{from{opacity:0;transform:scale(0.9);}to{opacity:1;transform:scale(1);}}
-#splashScreen{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;animation:flashBG 2s infinite;z-index:9999;}
-#splashScreen .logo{width:130px;height:130px;background:white;border-radius:50%;padding:10px;margin-bottom:15px;animation:fadeIn 1.5s ease-in-out;box-shadow:0 0 20px rgba(0,0,0,0.4);}
-#splashScreen h1{color:white;font-size:2rem;font-family:'Brush Script MT',cursive;margin-bottom:20px;}
-.progress-container{width:85%;height:10px;background: rgba(255,255,255,0.3);border-radius:5px;overflow:hidden;position:absolute;bottom:50px;}
-.progress-bar{width:0%;height:100%;background:linear-gradient(90deg,#00FF00,#007F3D);transition:width 5s linear;}
-#tapNote{position:absolute;bottom:20px;font-style:italic;animation:fadeIn 1.5s ease-in-out infinite alternate;}
+    .card {
+      background: #161b22;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      padding: 30px;
+      width: 90%;
+      max-width: 400px;
+      border: 1px solid #30363d;
+    }
 
-/* HEADER */
-header{background: rgba(0,0,0,0.2); text-align:center; padding:1rem; font-size:1.5rem; font-weight:600; backdrop-filter: blur(5px); display:none;}
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
 
-/* HOMEPAGE */
-.home-container{display:none;padding:2rem 1rem;text-align:center;animation:fadeIn 1.5s ease-in-out;}
-.home-logo{width:100px;height:100px;border-radius:50%;background:white;padding:10px;box-shadow:0 0 10px rgba(0,0,0,0.4);margin-bottom:10px;}
-.home-title{font-size:1.8rem;font-weight:700;margin-bottom:0.5rem;}
-.icon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-top:1.5rem;}
-.icon-card{background:rgba(255,255,255,0.15);border-radius:15px;padding:1rem;transition:0.3s ease;cursor:pointer;text-decoration:none;color:white;display:flex;flex-direction:column;align-items:center;}
-.icon-card:hover{background:rgba(255,255,255,0.3);transform:scale(1.05);}
-.icon-card img{width:40px;height:40px;margin-bottom:0.5rem;}
-.icon-card span{display:block;font-weight:600;color:white;}
+    .header h1 {
+      margin: 0;
+      color: #22c55e; /* Green */
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
 
-/* SCREENING CALCULATOR */
-#screeningPage{display:none;text-align:center;padding:2rem 1rem;}
-.calculator-container{background: rgba(255,255,255,0.95);color:#222;border-radius:20px;padding:30px 20px;max-width:400px;margin:0 auto;box-shadow:0 0 15px rgba(0,0,0,0.3);}
-.calculator-container h1{margin-bottom:20px;color: var(--green);}
-.calculator-container label{display:block;margin:10px 0 5px;font-weight:600;text-align:left;}
-.calculator-container input,.calculator-container select{width:80%;padding:8px;border-radius:6px;border:1px solid #ccc;text-align:center;margin-bottom:10px;}
-.calculator-container button{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-weight:600;margin-top:10px;}
-.calc-btn{background: var(--green);color:white;}
-.calc-btn:hover{background:#005f2a;}
-.back-btn{background: var(--yellow);color: var(--green);}
-.back-btn:hover{background:#e6c200;}
-#calcResult{margin-top:15px;font-weight:600;font-size:1.1rem;}
+    h2 {
+      text-align: center;
+      color: #f8fafc;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
 
-/* MODAL NEWS */
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;}
-.modal-content{background:white;color:#333;border-radius:15px;max-width:700px;height:80vh;overflow-y:auto;margin:8% auto;padding:20px;position:relative;}
-.modal-content::-webkit-scrollbar{width:8px;}
-.modal-content::-webkit-scrollbar-thumb{background:var(--green);border-radius:10px;}
-.modal-content h2{color:var(--green);margin-bottom:15px;text-align:center;}
-.close{position:absolute;top:10px;right:15px;font-size:22px;cursor:pointer;}
-.news-item{margin-bottom:20px;}
-.news-item h3{color:var(--green);}
-.news-item p{line-height:1.5;font-size:15px;}
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      background: #0d1117;
+      color: #fff;
+      font-size: 0.95rem;
+    }
 
-footer{background:rgba(0,0,0,0.2);text-align:center;padding:1rem;font-size:0.9rem;color:white;margin-top:2rem;}
-</style>
+    input::placeholder {
+      color: #9ca3af;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      background: #22c55e;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    .toggle {
+      text-align: center;
+      margin-top: 15px;
+      cursor: pointer;
+      color: #22c55e;
+      text-decoration: underline;
+    }
+
+    .toggle:hover {
+      color: #16a34a;
+    }
+  </style>
 </head>
 <body>
+  <div class="card">
+    <div class="header">
+      <h1>Examly — JAMB CBT</h1>
+    </div>
 
-<!-- SPLASH SCREEN -->
-<div id="splashScreen">
-  <img src="https://www.uniosun.edu.ng/images/logo.png" alt="UniOsun Logo" class="logo">
-  <h1 id="welcomeText"></h1>
-  <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
-  <p id="tapNote" style="display:none;">👆 Tap anywhere to continue</p>
-</div>
+    <h2 id="formTitle">Sign Up</h2>
 
-<!-- HEADER -->
-<header id="mainHeader">🌞 UNIOSUN CAMPUS NEWS 💚💛🤍</header>
+    <div id="signupForm">
+      <input type="text" id="signupFullName" placeholder="Full Name" required />
+      <input type="email" id="signupEmail" placeholder="Email" required />
+      <input type="password" id="signupPassword" placeholder="Password" required />
+      <button type="button" onclick="signUpUser()">Sign Up</button>
+    </div>
 
-<!-- HOMEPAGE -->
-<section class="home-container" id="homePage">
-  <img src="https://www.uniosun.edu.ng/images/logo.png" alt="UniOsun Logo" class="home-logo">
-  <h2 class="home-title">Welcome to Uniosun Info & Cruise 3080</h2>
+    <div id="loginForm" style="display:none;">
+      <input type="email" id="loginEmail" placeholder="Email" required />
+      <input type="password" id="loginPassword" placeholder="Password" required />
+      <button type="button" onclick="loginUser()">Login</button>
+    </div>
 
-  <div class="icon-grid">
-    <div class="icon-card" onclick="openNewsModal()">
-      <img src="https://cdn-icons-png.flaticon.com/512/3416/3416043.png"><span>Campus Updates</span>
-    </div>
-    <a href="https://efacility.jamb.gov.ng" target="_blank" class="icon-card">
-      <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png"><span>JAMB eFacility</span>
-    </a>
-    <a href="https://portal.uniosun.edu.ng" target="_blank" class="icon-card">
-      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135794.png"><span>Student Portal</span>
-    </a>
-    <div class="icon-card" onclick="showScreening()">
-      <img src="https://cdn-icons-png.flaticon.com/512/2920/2920268.png"><span>Screening Calculator</span>
-    </div>
-    <a href="https://www.perplexity.ai/" target="_blank" class="icon-card">
-      <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png"><span>AI Chat</span>
-    </a>
-    <a href="https://whatsapp.com/channel/0029VbAleTZ3LdQXTANM1z1u" target="_blank" class="icon-card">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"><span>WhatsApp Channel</span>
-    </a>
-  </div>
-</section>
-
-<!-- SCREENING CALCULATOR -->
-<section id="screeningPage">
-  <div class="calculator-container">
-    <h1>Screening Calculator</h1>
-    <label>JAMB Score (0-400)</label>
-    <input type="number" id="jambScore" placeholder="Enter JAMB Score" min="0" max="400">
-    <label>O'Level Grades (5 Subjects)</label>
-    <select id="grade1"><option value="">Subject 1</option><option>A1</option><option>B2</option><option>B3</option><option>C4</option><option>C5</option><option>C6</option></select>
-    <select id="grade2"><option value="">Subject 2</option><option>A1</option><option>B2</option><option>B3</option><option>C4</option><option>C5</option><option>C6</option></select>
-    <select id="grade3"><option value="">Subject 3</option><option>A1</option><option>B2</option><option>B3</option><option>C4</option><option>C5</option><option>C6</option></select>
-    <select id="grade4"><option value="">Subject 4</option><option>A1</option><option>B2</option><option>B3</option><option>C4</option><option>C5</option><option>C6</option></select>
-    <select id="grade5"><option value="">Subject 5</option><option>A1</option><option>B2</option><option>B3</option><option>C4</option><option>C5</option><option>C6</option></select>
-    <button class="calc-btn" onclick="calculateScore()">Calculate</button>
-    <div id="calcResult"></div>
-    <button class="back-btn" onclick="showHome()">🏠 Back to Home</button>
-  </div>
-</section>
-
-<!-- CAMPUS NEWS MODAL -->
-<div id="newsModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeNewsModal()">&times;</span>
-    <h2>📰 UNIOSUN Campus Updates</h2>
-    <div class="news-item">
-      <h3>1️⃣ Two Weeks Strike</h3>
-      <p>The school management has declared a two-week warning strike due to staff demands. Academic activities are temporarily on hold. Students are advised to remain calm and await further updates from the union representatives.</p>
-    </div>
-    <div class="news-item">
-      <h3>2️⃣ Merit List Released</h3>
-      <p>The first batch of admission has been released. The second supplementary list is expected before the end of October. Candidates should check their JAMB CAPS regularly for updates.</p>
-    </div>
-    <div class="news-item">
-      <h3>3️⃣ NELFund Not Affected</h3>
-      <p>The ongoing strike does not affect NELFund operations. Students can continue to access and apply for NELFund benefits as usual.</p>
-    </div>
-    <div class="news-item">
-      <h3>4️⃣ Document Printing Instructions</h3>
-      <p>All newly admitted students must print six copies of their registration documents. Two should be printed immediately after registration — one for the school and one for personal record. Four additional photocopies of the signed document should be made for future use. No official resumption date yet.</p>
-    </div>
-    <div class="news-item">
-      <h3>5️⃣ Deadline: October 18 (Supplementary List I)</h3>
-      <p>Deadline for payment of Access, Acceptance, and Medical fees for Supplementary List I is October 18. Required documents include Tax Clearance (available the next day after payment), Attestation Letter, JAMB Admission Letter, and Original JAMB Result.</p>
-    </div>
-    <div class="news-item">
-      <h3>6️⃣ Second Batch Released</h3>
-      <p>The second batch of admission has been released. Candidates are advised to monitor their JAMB portals as admission is rolling out. To accept admission, text your JAMB registration number followed by ACCEPT using the phone number registered with JAMB.</p>
+    <div class="toggle" onclick="toggleForms()">
+      Already have an account? Log in
     </div>
   </div>
-</div>
 
-<footer>© 2025 UNIOSUN Campus Info & Screening | Built for Students 💚💛🤍</footer>
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script>
+    // 🔗 Connect to your Supabase project
+    const SUPABASE_URL = "https://ptcjsbmymrrqmvoakvjv.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0Y2pzYm15bXJycW12b2Frdmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODg1ODcsImV4cCI6MjA3Nzg2NDU4N30.1GwKNpKR2-CPDO12O1ZwGxB4Uf_zUPqJxsnG_Yh3oh0";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-<script>
-// SPLASH SCREEN
-const text="💚💛🤍 Welcome to Uniosun Info & Cruise 3080 💚💛🤍";
-const welcomeText=document.getElementById("welcomeText");
-const progressBar=document.getElementById("progressBar");
-const tapNote=document.getElementById("tapNote");
-let i=0;
-function typeEffect(){if(i<text.length){welcomeText.innerHTML+=text.charAt(i);i++;setTimeout(typeEffect,80);}}
-typeEffect();
-setTimeout(()=>{progressBar.style.width="100%";},500);
-setTimeout(()=>{tapNote.style.display="block";},5000);
+    async function signUpUser() {
+      const fullName = document.getElementById('signupFullName').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
 
-document.getElementById('splashScreen').addEventListener('click',()=>{
-  document.getElementById('splashScreen').style.opacity='0';
-  setTimeout(()=>{
-    document.getElementById('splashScreen').style.display='none';
-    document.getElementById('mainHeader').style.display='block';
-    document.getElementById('homePage').style.display='block';
-  },500);
-});
+      const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: { data: { full_name: fullName } }
+      });
 
-// NAVIGATION
-function showScreening(){
-  document.getElementById('homePage').style.display='none';
-  document.getElementById('screeningPage').style.display='block';
-}
-function showHome(){
-  document.getElementById('screeningPage').style.display='none';
-  document.getElementById('homePage').style.display='block';
-}
+      if (error) {
+        alert('Signup failed: ' + error.message);
+      } else {
+        alert('Signup successful! Please verify your email before logging in.');
+      }
+    }
 
-// CALCULATOR
-const gradePoints={"A1":8,"B2":7,"B3":6,"C4":5,"C5":4,"C6":3};
-function calculateScore(){
-  const jamb=parseFloat(document.getElementById('jambScore').value);
-  const grades=[
-    gradePoints[document.getElementById('grade1').value],
-    gradePoints[document.getElementById('grade2').value],
-    gradePoints[document.getElementById('grade3').value],
-    gradePoints[document.getElementById('grade4').value],
-    gradePoints[document.getElementById('grade5').value]
-  ];
-  if(isNaN(jamb)||jamb<0||jamb>400){alert("Enter a valid JAMB score (0–400)");return;}
-  if(grades.includes(undefined)){alert("Select valid grades for all subjects");return;}
-  const jambScore=(jamb*60)/400;
-  const totalScore=jambScore+grades.reduce((a,b)=>a+b,0);
-  let comment=totalScore>=75?"🎉 Excellent!":"👍 Good! Keep pushing.";
-  if(totalScore<60)comment="⚠️ You may need improvement.";
-  document.getElementById('calcResult').innerHTML=`Your Total Score: <b>${totalScore.toFixed(2)}</b><br>${comment}`;
-}
+    async function loginUser() {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
 
-// MODAL
-function openNewsModal(){document.getElementById('newsModal').style.display='block';}
-function closeNewsModal(){document.getElementById('newsModal').style.display='none';}
-</script>
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
 
+      if (error) {
+        alert('Login failed: ' + error.message);
+      } else {
+        alert('Welcome to Examly! You are logged in ✅');
+      }
+    }
+
+    function toggleForms() {
+      const signupForm = document.getElementById('signupForm');
+      const loginForm = document.getElementById('loginForm');
+      const toggle = document.querySelector('.toggle');
+      const title = document.getElementById('formTitle');
+
+      if (signupForm.style.display === 'none') {
+        signupForm.style.display = 'block';
+        loginForm.style.display = 'none';
+        title.textContent = 'Sign Up';
+        toggle.textContent = 'Already have an account? Log in';
+      } else {
+        signupForm.style.display = 'none';
+        loginForm.style.display = 'block';
+        title.textContent = 'Log In';
+        toggle.textContent = "Don't have an account? Sign up";
+      }
+    }
+  </script>
 </body>
 </html>
