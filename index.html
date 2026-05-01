@@ -1,181 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Examly — JAMB CBT</title>
-  <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: #0d1117;
-      color: #f1f5f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIOSUN Screening Portal</title>
+<style>
+    body { margin:0; font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; }
+    #welcome { height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; background:linear-gradient(#ffffcc,#ccffcc,#ffffff); }
+    .logo { width:120px; border-radius:50%; }
+    .loaderBox { width:260px; height:18px; background:#ddd; border-radius:20px; overflow:hidden; margin: 15px auto; }
+    .loader { height:100%; width:0%; background:#28a745; transition: 0.1s; }
+    
+    #main { display:none; height:100vh; background:url("https://i.ibb.co/hRdVfWL8/UNIOSUN.jpg") center/cover no-repeat fixed; position:relative; }
+    #main::before { content:""; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); }
+    .content { position:relative; z-index:1; padding:20px; color: white; }
+    
+    .grid { margin-top:80px; display:grid; grid-template-columns:repeat(2,1fr); gap:15px; }
+    .card { background:rgba(255,255,255,0.15); padding:25px; border-radius:15px; text-align:center; cursor:pointer; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+
+    .page { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#fff; color:#333; overflow:auto; padding:20px; z-index:10; box-sizing: border-box; }
+    
+    /* COURSE SELECTION INTERFACE */
+    #selection-zone { margin: 10px 0; }
+    #courseSearch { width:100%; padding:12px; border: 2px solid #28a745; border-radius: 8px; font-size: 16px; margin-bottom: 5px; outline:none; }
+    #course { width:100%; height: 180px !important; border: 1px solid #ddd; border-radius: 8px; padding: 5px; outline:none; margin-bottom: 10px; }
+    #course option { padding: 12px; border-bottom: 1px solid #eee; }
+
+    /* SELECTED COURSE BOX */
+    .course-display-box { 
+        width: 100%; 
+        padding: 15px; 
+        margin: 10px 0; 
+        border: 2px solid #28a745; 
+        border-radius: 10px; 
+        background: #f1f8f1; 
+        color: #1b5e20; 
+        font-weight: bold; 
+        text-align: center; 
+        cursor: pointer; 
+        display: none; 
     }
 
-    .card {
-      background: #161b22;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-      padding: 30px;
-      width: 90%;
-      max-width: 400px;
-      border: 1px solid #30363d;
-    }
+    select, input, button { width:100%; padding:12px; margin:8px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+    button { background:#28a745; color:#fff; border:none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    button:active { transform: scale(0.98); }
+    
+    .select-btn { background: #1b5e20; margin-bottom: 15px; }
 
-    .header {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    .header h1 {
-      margin: 0;
-      color: #22c55e; /* Green */
-      font-size: 1.6rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-
-    h2 {
-      text-align: center;
-      color: #f8fafc;
-      font-weight: 500;
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      background: #0d1117;
-      color: #fff;
-      font-size: 0.95rem;
-    }
-
-    input::placeholder {
-      color: #9ca3af;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 6px;
-      background: #22c55e;
-      color: #fff;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 10px;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background: #16a34a;
-    }
-
-    .toggle {
-      text-align: center;
-      margin-top: 15px;
-      cursor: pointer;
-      color: #22c55e;
-      text-decoration: underline;
-    }
-
-    .toggle:hover {
-      color: #16a34a;
-    }
-  </style>
+    #res { margin-top: 15px; padding: 20px; border-radius: 10px; text-align: center; line-height: 1.6; border: 2px dashed #ccc; }
+    .eligible { color: #155724; background-color: #d4edda; border-color: #c3e6cb !important; }
+    .not-eligible { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb !important; }
+    
+    .disclaimer { font-size: 13px; color: #444; margin-top: 10px; background: #fff3cd; padding: 10px; border-radius: 8px; border: 1px solid #ffeeba; }
+    .wa-btn { background: #25D366; display: none; margin-top: 10px; }
+</style>
 </head>
 <body>
-  <div class="card">
-    <div class="header">
-      <h1>Examly — JAMB CBT</h1>
+
+<div id="welcome">
+    <div>
+        <img class="logo" src="https://i.ibb.co/RkqSXrXV/images-3.jpg">
+        <h2>UNIOSUN Screening Portal</h2>
+        <div class="loaderBox"><div class="loader" id="loader"></div></div>
+        <div id="percent">0%</div>
+    </div>
+</div>
+
+<div id="main">
+    <div class="content">
+        <h2 style="text-align:center">Admission Portal</h2>
+        <div class="grid">
+            <div class="card" onclick="openPage('calc')">🧮 Calculator</div>
+            <div class="card" onclick="openPage('about')">ℹ️ Help</div>
+        </div>
+    </div>
+</div>
+
+<div class="page" id="calc">
+    <h2>Screening Calculator</h2>
+    
+    <div id="selection-zone">
+        <label><b>Find Your Programme:</b></label>
+        <input type="text" id="courseSearch" placeholder="Type first letter (e.g. M)..." onkeyup="filterCourses()">
+        <select id="course" size="8"></select>
+        <button class="select-btn" onclick="confirmSelection()">SELECT COURSE</button>
+    </div>
+    
+    <div id="selected-course-box" class="course-display-box" onclick="toggleBackToSearch()">
+        <span id="display-name"></span>
+        <div style="font-size: 11px; font-weight: normal; margin-top: 5px; color: #666;">(Click here to change course)</div>
     </div>
 
-    <h2 id="formTitle">Sign Up</h2>
+    <label><b>State of Origin:</b></label>
+    <select id="state">
+        <option value="Other">Other State (General Merit)</option>
+        <option value="Osun">Osun State (Indigene/Catchment)</option>
+    </select>
 
-    <div id="signupForm">
-      <input type="text" id="signupFullName" placeholder="Full Name" required />
-      <input type="email" id="signupEmail" placeholder="Email" required />
-      <input type="password" id="signupPassword" placeholder="Password" required />
-      <button type="button" onclick="signUpUser()">Sign Up</button>
+    <h4>O'Level Grades (Top 5)</h4>
+    <div id="grade-inputs">
+        <select class="g"></select><select class="g"></select>
+        <select class="g"></select><select class="g"></select>
+        <select class="g"></select>
     </div>
 
-    <div id="loginForm" style="display:none;">
-      <input type="email" id="loginEmail" placeholder="Email" required />
-      <input type="password" id="loginPassword" placeholder="Password" required />
-      <button type="button" onclick="loginUser()">Login</button>
-    </div>
+    <input id="jamb" type="number" placeholder="Enter JAMB Score (160–400)">
+    
+    <button onclick="calculate()">Calculate Status</button>
+    
+    <div id="res">Waiting for input...</div>
 
-    <div class="toggle" onclick="toggleForms()">
-      Already have an account? Log in
-    </div>
-  </div>
+    <button id="whatsappBtn" class="wa-btn" onclick="sendToWhatsApp()">📲 Check Admission Probability</button>
+    
+    <button onclick="closePage('calc')" style="background:#555; margin-top: 20px;">Back</button>
+</div>
 
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
-  <script>
-    // 🔗 Connect to your Supabase project
-    const SUPABASE_URL = "https://ptcjsbmymrrqmvoakvjv.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0Y2pzYm15bXJycW12b2Frdmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODg1ODcsImV4cCI6MjA3Nzg2NDU4N30.1GwKNpKR2-CPDO12O1ZwGxB4Uf_zUPqJxsnG_Yh3oh0";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<div class="page" id="about">
+    <h2>Help & Info</h2>
+    <p>This system calculates your aggregate based on your JAMB and O'Level scores.</p>
+    <button onclick="closePage('about')">Back</button>
+</div>
 
-    async function signUpUser() {
-      const fullName = document.getElementById('signupFullName').value;
-      const email = document.getElementById('signupEmail').value;
-      const password = document.getElementById('signupPassword').value;
+<script>
+const courseData = [
+    { name: "Accounting", merit: 70.7, indigene: 64.9 },
+    { name: "Adult Education", merit: 40, indigene: 40 },
+    { name: "Advertising", merit: 47.6, indigene: 45 },
+    { name: "Agric. Economics", merit: 57, indigene: 46.4 },
+    { name: "Agric. Extension", merit: 56.5, indigene: 44.5 },
+    { name: "Agric. Forestry", merit: 50, indigene: 40 },
+    { name: "Agric. Agronomy", merit: 54.8, indigene: 44.6 },
+    { name: "Agric. Animal Science", merit: 58.5, indigene: 40.5 },
+    { name: "Agric. Fisheries and Aquaculture", merit: 55, indigene: 45.5 },
+    { name: "Agric. Wildlife Management", merit: 54, indigene: 44.8 },
+    { name: "Anatomy", merit: 60.4, indigene: 50 },
+    { name: "Animal and Environmental Biology", merit: 54.2, indigene: 42.3 },
+    { name: "Arabic Language & Lit.", merit: 62.5, indigene: 50 },
+    { name: "Architecture", merit: 62.8, indigene: 55.8 },
+    { name: "Banking & Finance", merit: 65.8, indigene: 60.6 },
+    { name: "Biochemistry", merit: 62.8, indigene: 57 },
+    { name: "Biotechnology", merit: 59.8, indigene: 46.1 },
+    { name: "Brewing Science and Technology", merit: 50, indigene: 40 },
+    { name: "Broadcasting", merit: 60.4, indigene: 43 },
+    { name: "Building", merit: 58.8, indigene: 50.5 },
+    { name: "Business Administration", merit: 66.2, indigene: 61.3 },
+    { name: "Chemical Engineering", merit: 64.1, indigene: 48.6 },
+    { name: "Chemistry", merit: 58.2, indigene: 47.1 },
+    { name: "Civil Engineering", merit: 67.1, indigene: 61.6 },
+    { name: "Common & Islamic Law", merit: 73.3, indigene: 69.7 },
+    { name: "Computer Engineering", merit: 63.1, indigene: 56.3 },
+    { name: "Computer Science", merit: 68.1, indigene: 62.3 },
+    { name: "Criminology & Security Studies", merit: 69.4, indigene: 63.5 },
+    { name: "Cybersecurity", merit: 66, indigene: 61.2 },
+    { name: "Data Science", merit: 59.6, indigene: 45 },
+    { name: "Economics", merit: 68, indigene: 60.3 },
+    { name: "Electrical/Electronics Engineering", merit: 65.9, indigene: 59.5 },
+    { name: "English & Intl. Studies", merit: 63.5, indigene: 55.1 },
+    { name: "Entrepreneurial Studies", merit: 61.4, indigene: 48.9 },
+    { name: "Food Science & Tech.", merit: 60.4, indigene: 54.4 },
+    { name: "French & Intl. Studies", merit: 60.2, indigene: 45 },
+    { name: "Geology", merit: 57.7, indigene: 43 },
+    { name: "History & Intl. Studies", merit: 62.8, indigene: 48.4 },
+    { name: "Industrial Relations & Personnel Management", merit: 62.2, indigene: 52.8 },
+    { name: "Information Technology", merit: 60.9, indigene: 55 },
+    { name: "International Relations & Diplomacy", merit: 70.2, indigene: 63.4 },
+    { name: "Journalism and Media Studies", merit: 64.1, indigene: 47.3 },
+    { name: "LLB (Law)", merit: 79.4, indigene: 75.6 },
+    { name: "Marketing", merit: 64, indigene: 57 },
+    { name: "Mass Communication", merit: 72, indigene: 63.7 },
+    { name: "Mathematics", merit: 58.2, indigene: 45 },
+    { name: "MBBS", merit: 83.2, indigene: 79.3 },
+    { name: "Mechanical Engineering", merit: 66, indigene: 59.8 },
+    { name: "Mechatronics Engineering", merit: 63.8, indigene: 49.3 },
+    { name: "Medical Laboratory Science (B.MLS)", merit: 71.4, indigene: 67.5 },
+    { name: "Microbiology", merit: 62.5, indigene: 56.2 },
+    { name: "Nursing Science", merit: 76.4, indigene: 72.8 },
+    { name: "Pharmacology", merit: 64.7, indigene: 58.6 },
+    { name: "Philosophy", merit: 63, indigene: 49.3 },
+    { name: "Physics with Electronics", merit: 57.2, indigene: 46.7 },
+    { name: "Physiology", merit: 61.1, indigene: 49.8 },
+    { name: "Political Science", merit: 67.8, indigene: 61.4 },
+    { name: "Psychology", merit: 64.8, indigene: 52 },
+    { name: "Public Administration", merit: 62.9, indigene: 56.7 },
+    { name: "Public Health", merit: 63, indigene: 58.5 },
+    { name: "Quantity Survey", merit: 58.3, indigene: 53.7 },
+    { name: "Radiography and Radiation Science", merit: 69.8, indigene: 65 },
+    { name: "Sociology", merit: 67.2, indigene: 60.5 },
+    { name: "Software Engineering", merit: 65.9, indigene: 58.9 },
+    { name: "Theatre Arts", merit: 61.5, indigene: 54.6 },
+    { name: "Urban & Regional Planning", merit: 55.4, indigene: 45 }
+];
 
-      const { data, error } = await supabaseClient.auth.signUp({
-        email: email,
-        password: password,
-        options: { data: { full_name: fullName } }
-      });
+const gradePoints = { "A1": 8, "B2": 7, "B3": 6, "C4": 5, "C5": 4, "C6": 3 };
+let selectedIdx = -1;
 
-      if (error) {
-        alert('Signup failed: ' + error.message);
-      } else {
-        alert('Signup successful! Please verify your email before logging in.');
-      }
+window.onload = () => {
+    let sel = document.getElementById("course");
+    courseData.sort((a,b) => a.name.localeCompare(b.name)).forEach((c, i) => {
+        let opt = document.createElement("option");
+        opt.value = i; opt.text = c.name;
+        sel.add(opt);
+    });
+
+    document.querySelectorAll(".g").forEach(s => {
+        for (let g in gradePoints) {
+            let opt = document.createElement("option");
+            opt.value = g; opt.text = g; s.add(opt);
+        }
+    });
+};
+
+function filterCourses() {
+    let input = document.getElementById("courseSearch").value.toUpperCase();
+    let select = document.getElementById("course");
+    let options = select.getElementsByTagName("option");
+    for (let i = 0; i < options.length; i++) {
+        let txtValue = options[i].text.toUpperCase();
+        options[i].style.display = txtValue.startsWith(input) ? "" : "none";
     }
+}
 
-    async function loginUser() {
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: password
-      });
-
-      if (error) {
-        alert('Login failed: ' + error.message);
-      } else {
-        alert('Welcome to Examly! You are logged in ✅');
-      }
+function confirmSelection() {
+    let sel = document.getElementById("course");
+    if(sel.value === "") {
+        alert("Please highlight a course in the list first!");
+        return;
     }
+    selectedIdx = sel.value;
+    document.getElementById("display-name").innerText = courseData[selectedIdx].name;
+    document.getElementById("selection-zone").style.display = "none";
+    document.getElementById("selected-course-box").style.display = "block";
+}
 
-    function toggleForms() {
-      const signupForm = document.getElementById('signupForm');
-      const loginForm = document.getElementById('loginForm');
-      const toggle = document.querySelector('.toggle');
-      const title = document.getElementById('formTitle');
+function toggleBackToSearch() {
+    document.getElementById("selection-zone").style.display = "block";
+    document.getElementById("selected-course-box").style.display = "none";
+    document.getElementById("courseSearch").value = "";
+    filterCourses();
+}
 
-      if (signupForm.style.display === 'none') {
-        signupForm.style.display = 'block';
-        loginForm.style.display = 'none';
-        title.textContent = 'Sign Up';
-        toggle.textContent = 'Already have an account? Log in';
-      } else {
-        signupForm.style.display = 'none';
-        loginForm.style.display = 'block';
-        title.textContent = 'Log In';
-        toggle.textContent = "Don't have an account? Sign up";
-      }
-    }
-  </script>
+// Loader
+let p = 0;
+let t = setInterval(() => {
+    p++;
+    document.getElementById("loader").style.width = p + "%";
+    document.getElementById("percent").innerText = p + "%";
+    if (p >= 100) { clearInterval(t); welcome.style.display="none"; main.style.display="block"; }
+}, 10);
+
+function openPage(id) { document.getElementById(id).style.display = "block"; }
+function closePage(id) { document.getElementById(id).style.display = "none"; }
+
+function calculate() {
+    if(selectedIdx === -1) { alert("Please select a course first!"); return; }
+    let oSum = [...document.querySelectorAll(".g")].reduce((a, s) => a + gradePoints[s.value], 0);
+    let jamb = document.getElementById("jamb").value;
+    if (!jamb || jamb < 160) { alert("Enter valid JAMB score"); return; }
+
+    let total = ((oSum / 40) * 40) + ((jamb / 400) * 60);
+    let finalScore = total.toFixed(2);
+    let course = courseData[selectedIdx];
+    let isOsun = document.getElementById("state").value === "Osun";
+    let target = isOsun ? course.indigene : course.merit;
+    
+    let resDiv = document.getElementById("res");
+    let passed = total >= target;
+    
+    resDiv.className = passed ? "eligible" : "not-eligible";
+    resDiv.innerHTML = `
+        <div style="font-size:22px; font-weight:bold;">${passed ? 'YOU PASSED! ✅' : 'YOU DID NOT PASS ❌'}</div>
+        <div>Your Aggregate: <b>${finalScore}%</b></div>
+        <div class="disclaimer">
+            This cut-off is based on the <b>last set (2025/2026 session)</b>. 
+            To check your probability for this year, click below.
+        </div>
+    `;
+    document.getElementById("whatsappBtn").style.display = "block";
+}
+
+function sendToWhatsApp() {
+    const courseName = courseData[selectedIdx].name;
+    const scoreStr = document.getElementById("res").innerText.split('Aggregate: ')[1]?.split('%')[0] || "unknown";
+    const text = `Hi, I checked my UNIOSUN aggregate. It is ${scoreStr}% for ${courseName}. Can you check my admission probability?`;
+    window.open(`https://wa.me/2347072853151?text=${encodeURIComponent(text)}`, '_blank');
+}
+</script>
 </body>
 </html>
