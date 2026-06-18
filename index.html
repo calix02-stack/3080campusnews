@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3080 Screening Calculator & Admission Path</title>
+    <link rel="manifest" href="manifest.json">
     <style>
         :root { --primary: #28a745; --dark: #111; --whatsapp: #25D366; }
         body { margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; overflow-x: hidden; }
@@ -160,6 +161,15 @@
 </div>
 
 <script>
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Service Worker Registered'))
+            .catch(err => console.log('SW Registration Failed', err));
+        });
+    }
+
     const courseData = [
         {name:"B. Agric. Economics", merit:57, indigene:46.4}, {name:"B. Agric. Extension", merit:56.5, indigene:44.5},
         {name:"B. Agric. Forestry", merit:50, indigene:40}, {name:"B. Agric. Agronomy", merit:54.8, indigene:44.6},
@@ -292,4 +302,3 @@
 
 </body>
 </html>
- 
