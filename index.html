@@ -40,6 +40,7 @@
         #grade-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .help-card { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 6px solid var(--primary); }
         .wa-btn { background: var(--whatsapp); display: block; text-decoration: none; color: white; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; margin-top: 10px;}
+        #installBtn { background: var(--whatsapp); color: white; font-weight: bold; margin-top: 20px; border: none; padding: 15px; border-radius: 10px; display: none; width: 100%; }
     </style>
 </head>
 <body>
@@ -73,6 +74,7 @@
     <div id="menu-icon" onclick="openNav()"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
     <div class="content">
         <h2 style="text-align:center; color: white; border: none;">Aspirant Dashboard</h2>
+        <button id="installBtn">INSTALL APP</button>
         <div class="grid">
             <div class="card" onclick="openPage('calc')"><span>🧮</span><span>Calculator</span></div>
             <a href="https://efacility.jamb.gov.ng/login" target="_blank" class="card"><img src="https://i.ibb.co/PZ99mX6/jamb-logo.png"><span>JAMB Portal</span></a>
@@ -108,30 +110,13 @@
 <div class="page" id="about">
     <h2>The Path</h2>
     <h3>Full Admission Path Guide</h3>
-    
     <div class="help-card">
         <p>The university sets a general cut-off of 160 for eligibility to apply for Post-UTME screening. However, eligibility does not guarantee admission into competitive fields.</p>
         <ul>
-            <li><b>Highly Competitive:</b> MBBS (Medicine), Nursing, Law, Medical Laboratory Science. These usually require a JAMB score of <b>200 - 300+</b> to be safe.</li>
+            <li><b>Highly Competitive:</b> MBBS, Nursing, Law, Medical Laboratory Science. Aim for <b>200 - 300+</b>.</li>
             <li><b>Competitive:</b> Computer Science, Mass Communication, Accounting, Public Health. Aim for <b>200+</b>.</li>
-            <li><b>General:</b> If you scored 160-200, it's still okay for less competitive courses.</li>
         </ul>
     </div>
-
-    <div class="help-card">
-        <h3>2. Understanding the 3080 Strategy</h3>
-        <p>Admission is based on an aggregate score. The school uses a 60% UTME and 40% O'Level grading system. To maximize your chances:</p>
-        <ul>
-            <li>Ensure your O'Level results are uploaded to the JAMB CAPS portal.</li>
-            <li>If your aggregate is low for your current course, consider a Change of Course to a less competitive one before the screening deadline.</li>
-        </ul>
-    </div>
-
-    <div class="help-card">
-        <h3>3. Catchment Area (Indigene) Advantage</h3>
-        <p>Candidates from Osun State (Indigenes) often have lower cut-off marks compared to Merit/Non-indigene candidates. Ensure your local government certificate is ready for physical verification.</p>
-    </div>
-
     <a href="https://wa.me/2347072853151" class="wa-btn">📲 Chat Consultant for questions and admission guide</a>
     <button class="back-btn" onclick="closePage('about')">BACK TO HOME</button>
 </div>
@@ -150,7 +135,7 @@
 
 <div class="page" id="privacy">
     <h2>Privacy Policy</h2>
-    <p>We do not store personal data. Calculations are performed locally. We use Google AdSense.</p>
+    <p>We do not store personal data. Calculations are performed locally.</p>
     <button class="back-btn" onclick="closePage('privacy')">BACK</button>
 </div>
 
@@ -161,11 +146,30 @@
 </div>
 
 <script>
+    // PWA Logic: Install Prompt
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'block';
+    });
+
+    installBtn.addEventListener('click', () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') { installBtn.style.display = 'none'; }
+                deferredPrompt = null;
+            });
+        }
+    });
+
     // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js')
-            .then(reg => console.log('Service Worker Registered'))
             .catch(err => console.log('SW Registration Failed', err));
         });
     }
@@ -291,8 +295,7 @@
             Your Aggregate: <b>${agg.toFixed(2)}%</b><br>
             2025 Target Cut-off: <b>${tar}%</b><br>
             <p style="font-size:14px; margin-top:15px; color:#333; line-height:1.4;">
-                Please note: This calculation is based on the <b>2025 cut-off marks</b>. The official cut-off for 2026 has not yet been released. 
-                To confirm if your score truly meets the requirement for your course, please chat with our consultant and join our support group via the links below.
+                Please note: This calculation is based on the <b>2025 cut-off marks</b>.
             </p>
             <a href="https://wa.me/2347072853151" target="_blank" class="wa-btn">💬 Chat Consultant</a>
             <a href="https://chat.whatsapp.com/Cd9VphU1PFg6VXsrFbwQuT" target="_blank" class="wa-btn" style="background:#075E54;">👥 Join WhatsApp Group</a>
