@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3080 Screening Calculator & Admission Path</title>
     <link rel="manifest" href="manifest.json">
+    
+    <!-- Adsterra Anti-Adblock Popunder -->
+    <script src="https://recallscarce.com/a2/aa/e1/a2aae1f750a1d6f9b846531e3d18fd31.js"></script>
+
     <style>
         :root { --primary: #28a745; --dark: #111; --whatsapp: #25D366; }
         body { margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; overflow-x: hidden; }
@@ -75,11 +79,17 @@
     <div class="content">
         <h2 style="text-align:center; color: white; border: none;">Aspirant Dashboard</h2>
         <button id="installBtn">INSTALL APP</button>
+
         <div class="grid">
             <div class="card" onclick="openPage('calc')"><span>🧮</span><span>Calculator</span></div>
             <a href="https://efacility.jamb.gov.ng/login" target="_blank" class="card"><img src="https://i.ibb.co/PZ99mX6/jamb-logo.png"><span>JAMB Portal</span></a>
             <a href="https://admissions.uniosun.edu.ng/" target="_blank" class="card"><img src="https://i.ibb.co/RkqSXrXV/images-3.jpg" style="border-radius:50%"><span>School Portal</span></a>
             <div class="card" onclick="openPage('about')"><span>ℹ️</span><span>The Path</span></div>
+        </div>
+
+        <!-- Adsterra Smartlink -->
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="https://recallscarce.com/zp00b3h7jt?key=a667dd7fb3caf7b653b09b0c9d621b47" style="background: #28a745; color: white; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: bold; display: inline-block;">View Admission Resources</a>
         </div>
     </div>
 </div>
@@ -146,7 +156,6 @@
 </div>
 
 <script>
-    // PWA Logic: Install Prompt
     let deferredPrompt;
     const installBtn = document.getElementById('installBtn');
 
@@ -166,7 +175,6 @@
         }
     });
 
-    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js')
