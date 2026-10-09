@@ -1,3 +1,5 @@
+/*! MyUTME service worker · enzo-ai
+ * Built by Enzo · © 2026 Enzo. All rights reserved. */
 // MyUTME service worker (v27 — question files now network-first; was v24 — topic progress + question-count picker + 249 new Physics questions; v14 notes below) — always loads the NEWEST app, still works offline.
 //
 // WHAT CHANGED vs v13:
@@ -15,7 +17,7 @@
 //    but the background refresh now also bypasses the HTTP cache.
 // v27: question files (questions-*.json) are now NETWORK-FIRST, so newly uploaded questions show
 // up straight away — you never need to edit this file just to publish questions again.
-const CACHE_NAME = "myutme-cache-v33";
+const CACHE_NAME = "myutme-cache-v42";
 
 const APP_SHELL = [
   "./",
@@ -37,6 +39,17 @@ function freshFetch(request, timeoutMs = FETCH_TIMEOUT_MS) {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error("Network request timed out")), timeoutMs);
     fetch(request, { cache: "no-store" }).then(
+      (response) => { clearTimeout(timer); resolve(response); },
+      (err) => { clearTimeout(timer); reject(err); }
+    );
+  });
+}
+
+// like freshFetch, but lets the browser reuse its copy when the server says "not modified"
+function revalidateFetch(request, timeoutMs = FETCH_TIMEOUT_MS) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("Network request timed out")), timeoutMs);
+    fetch(request, { cache: "no-cache" }).then(
       (response) => { clearTimeout(timer); resolve(response); },
       (err) => { clearTimeout(timer); reject(err); }
     );
@@ -84,7 +97,32 @@ self.addEventListener("fetch", (event) => {
 
   const isAppScript = url.pathname.endsWith(".js") && /offline-db/.test(url.pathname);
 
-  // The app page and offline-db.js: NETWORK FIRST, always fresh. Saved copy only if offline/very slow.
+  // INSTANT OPEN: the app page (any route like /, /account) and offline-db.js come straight from
+  // the saved copy — no waiting on the network, so no loading bar on open and no hang without data.
+  // New versions are downloaded quietly by the CHECK_UPDATE message below (page sends it at most
+  // once every 24h, or when the refresh button is tapped) and are used on the next open.
+  const isShellNav =
+    (event.request.mode === "navigate" && !/\.[a-z0-9]+$/i.test(url.pathname)) ||
+    url.pathname === "/" ||
+    url.pathname.endsWith("/index.html");
+  if (isShellNav || isAppScript) {
+    const key = isShellNav ? "./index.html" : "./offline-db.js";
+    event.respondWith(
+      caches.match(key, { ignoreSearch: true }).then((cached) => {
+        if (cached) return cached;
+        return freshFetch(event.request, PAGE_TIMEOUT_MS).then((res) => {
+          if (res && res.status === 200) {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then((c) => c.put(key, clone));
+          }
+          return res;
+        }).catch(() => (isShellNav ? caches.match("./") : null).then((c) => c || Response.error()));
+      })
+    );
+    return;
+  }
+
+  // Other pages (privacy.html, terms.html...): NETWORK FIRST. Saved copy only if offline/very slow.
   if (isAppShell || isAppScript) {
     event.respondWith(
       freshFetch(event.request, PAGE_TIMEOUT_MS)
@@ -111,7 +149,8 @@ self.addEventListener("fetch", (event) => {
   if (isQuestionDataFile) {
     const cacheKey = new Request(url.origin + url.pathname);
     event.respondWith(
-      freshFetch(event.request, QUESTION_TIMEOUT_MS)
+      // Revalidate (ETag / 304) instead of re-downloading the whole file every time.
+      revalidateFetch(cacheKey, QUESTION_TIMEOUT_MS)
         .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
             const clone = networkResponse.clone();
@@ -138,6 +177,33 @@ self.addEventListener("fetch", (event) => {
         .catch(() => cached);
       return cached || fetchPromise;
     })
+  );
+});
+
+// ---- Quiet update check (sent by the page: at most once per 24h, or on the refresh button) ----
+async function refreshShell() {
+  const urls = ["./index.html", "./offline-db.js", "./manifest.json"];
+  const fetched = [];
+  for (const u of urls) {
+    const res = await revalidateFetch(new Request(u), 20000); // ETag check: tiny reply if unchanged
+    if (!res || !res.ok) throw new Error("update check failed for " + u);
+    fetched.push([u, res]);
+  }
+  const cache = await caches.open(CACHE_NAME);
+  for (const [u, res] of fetched) {
+    await cache.put(u, res.clone());
+    if (u === "./index.html") await cache.put("./", res.clone());
+  }
+}
+
+self.addEventListener("message", (event) => {
+  if (!event.data || event.data.type !== "CHECK_UPDATE") return;
+  const port = event.ports && event.ports[0];
+  event.waitUntil(
+    refreshShell().then(
+      () => port && port.postMessage({ ok: true }),
+      () => port && port.postMessage({ ok: false })
+    )
   );
 });
 

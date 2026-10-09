@@ -47,7 +47,7 @@
     // connection every time the tab becomes visible again, before any
     // question load even gets a chance to run into a dead connection.
     function invalidateConnection(reason) {
-        reportDiagnostic('recycling IndexedDB connection: ' + reason);
+        try { console.info('offline-db: recycling IndexedDB connection: ' + reason); } catch (e) {}
         if (currentDb) { try { currentDb.close(); } catch (e) {} }
         dbPromise = null;
         currentDb = null;
@@ -55,8 +55,21 @@
 
     if (typeof document !== 'undefined') {
         document.addEventListener('visibilitychange', function () {
-            if (document.visibilityState === 'visible' && dbPromise) {
-                invalidateConnection('tab became visible again (defensive resume)');
+            if (document.visibilityState !== 'visible' || !dbPromise || !currentDb) return;
+            // Health-check first: a live connection answers a tiny read at
+            // once, so leave it alone. Only a dead one (throws or hangs)
+            // gets recycled — closing a healthy connection on every tab
+            // switch was itself causing hangs and log spam.
+            var checked = currentDb, answered = false;
+            var t = setTimeout(function () {
+                if (!answered && currentDb === checked) invalidateConnection('connection unresponsive after resume');
+            }, 1500);
+            try {
+                var r = checked.transaction('meta', 'readonly').objectStore('meta').count();
+                r.onsuccess = r.onerror = function () { answered = true; clearTimeout(t); };
+            } catch (err) {
+                clearTimeout(t);
+                if (currentDb === checked) invalidateConnection('connection threw on resume: ' + (err && err.message));
             }
         });
     }
@@ -73,8 +86,12 @@
     // already loaded by the time this file runs), so the next
     // occurrence shows the real cause instead of just "timed out".
     // Never throws — a broken diagnostic must never break the app.
+    var lastDiag = {};
     function reportDiagnostic(context, extra) {
         try {
+            var now = Date.now();
+            if (lastDiag[context] && now - lastDiag[context] < 300000) return; // same message at most once / 5 min
+            lastDiag[context] = now;
             var detail = extra ? ' | ' + JSON.stringify(extra) : '';
             if (typeof window.logAppError === 'function') {
                 window.logAppError('offline-db diagnostic: ' + context, { message: context + detail });
@@ -650,14 +667,17 @@
         if (navigator.onLine === false) {
             return Promise.reject(new TypeError('Failed to fetch (offline)'));
         }
-        var fetchOpts = { cache: 'no-store' };
+        // 'no-cache' = ask the server "changed?" (ETag) and reuse the saved copy on a
+        // tiny 304 reply. Was 'no-store' + a ?v=timestamp, which re-downloaded every
+        // subject file (up to 1.6 MB each) on EVERY open and starved other requests.
+        var fetchOpts = { cache: 'no-cache' };
         var abortTimer;
         if (typeof AbortController !== 'undefined') {
             var ctrl = new AbortController();
-            abortTimer = setTimeout(function () { ctrl.abort(); }, 8000);
+            abortTimer = setTimeout(function () { ctrl.abort(); }, 20000);
             fetchOpts.signal = ctrl.signal;
         }
-        return fetch('questions-' + subjectId + '.json?v=' + Date.now(), fetchOpts)
+        return fetch('questions-' + subjectId + '.json', fetchOpts)
             .finally(function () { clearTimeout(abortTimer); })
             .then(function (res) {
                 if (res.status === 404) return { notFound: true };
